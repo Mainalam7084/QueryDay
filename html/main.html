@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QueryDay: Mission Control</title>
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="../css/main.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Orbitron:wght@400;700&display=swap"
@@ -25,13 +25,13 @@
     <div class="dashboard">
         <!-- Year Fact -->
         <div class="card">
-            <h2>Year Fact</h2>
+            <h2>Archivo Cultural del Año</h2>
             <div id="year-fact" class="fact-content">Loading data stream...</div>
         </div>
 
-        <!-- Math Fact (Replaces Date Fact) -->
+        <!-- Math Fact -->
         <div class="card">
-            <h2>Math Fact</h2>
+            <h2>Valor Numérico del Archivo</h2>
             <div id="math-fact" class="fact-content">Calculating probabilities...</div>
         </div>
 
@@ -56,13 +56,19 @@
         <button id="download-btn" class="action-btn">Download Artifact</button>
     </div>
 
+    <!-- Modules Navigation -->
+    <div class="nav-section" style="margin-top: 0; margin-bottom: 1rem;">
+        <a href="facts.core.culture.html" class="action-btn">Cultural Archive</a>
+        <a href="tech_world.html" class="action-btn">Global Status</a>
+    </div>
+
     <!-- Navigation -->
     <div class="nav-section">
         <a href="quiz.html" class="quiz-btn">Enter Chrono-Quiz</a>
         <a href="predictor.html" class="future-btn">Proceed to Future</a>
     </div>
 
-    <script src="js/main.js"></script>
+    <script src="../js/main.js"></script>
 </body>
 
 </html>

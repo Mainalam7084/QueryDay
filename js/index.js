@@ -39,25 +39,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Save to Session Storage as requested
-            sessionStorage.setItem('birthDay', day);
-            sessionStorage.setItem('birthMonth', month);
-            sessionStorage.setItem('birthYear', year);
-            sessionStorage.setItem('originCity', city); // Saving city name too for display
-            sessionStorage.setItem('originLatitude', coords.lat);
-            sessionStorage.setItem('originLongitude', coords.lon);
+            // Create CHRONO_STATE object
+            const CHRONO_STATE = {
+                date: { year, month, day },
+                location: {
+                    city: city,
+                    lat: coords.lat,
+                    lon: coords.lon
+                },
+                facts: { core: null, culture: null, tech: null }
+            };
 
-            // Also keeping the object for backward compatibility if needed, but main request was specific keys.
-            // We will stick to the specific keys for the new logic.
-            const birthDate = { day, month, year };
-            sessionStorage.setItem('birthDate', JSON.stringify(birthDate));
+            // Save to LocalStorage
+            localStorage.setItem('CHRONO_STATE', JSON.stringify(CHRONO_STATE));
 
             // Animation out effect
             document.querySelector('.container').style.opacity = '0';
             document.querySelector('.container').style.transform = 'scale(1.1)';
 
             setTimeout(() => {
-                window.location.href = 'main.html';
+                window.location.href = 'html/main.html';
             }, 500);
 
         } catch (err) {
@@ -82,19 +83,42 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function getCoordinates(city) {
-        // Using Nominatim API (OpenStreetMap)
-        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(city)}`;
-        const res = await fetch(url);
-        if (!res.ok) throw new Error('Geocoding failed');
-        const data = await res.json();
+        try {
+            // Using Nominatim API (OpenStreetMap)
+            // Nominatim requires a User-Agent header
+            const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(city)}`;
+            console.log('Fetching coordinates for:', city);
 
-        if (data && data.length > 0) {
-            return {
-                lat: data[0].lat,
-                lon: data[0].lon
-            };
+            const res = await fetch(url, {
+                headers: {
+                    'User-Agent': 'QueryDay/4.0 (Educational Project)'
+                }
+            });
+
+            console.log('Geocoding response status:', res.status);
+
+            if (!res.ok) {
+                console.error('Geocoding failed with status:', res.status);
+                throw new Error('Geocoding failed');
+            }
+
+            const data = await res.json();
+            console.log('Geocoding data:', data);
+
+            if (data && data.length > 0) {
+                console.log('Coordinates found:', data[0].lat, data[0].lon);
+                return {
+                    lat: data[0].lat,
+                    lon: data[0].lon
+                };
+            }
+
+            console.warn('No coordinates found for city:', city);
+            return null;
+        } catch (error) {
+            console.error('Error in getCoordinates:', error);
+            throw error;
         }
-        return null;
     }
 
     function showError(message) {

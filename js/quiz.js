@@ -1,22 +1,24 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const birthDay = sessionStorage.getItem('birthDay');
-    const birthMonth = sessionStorage.getItem('birthMonth');
-    const birthYear = sessionStorage.getItem('birthYear');
-    const sessionData = JSON.parse(sessionStorage.getItem('queryDayData'));
+    // Retrieve CHRONO_STATE from localStorage
+    const stateJson = localStorage.getItem('CHRONO_STATE');
 
-    if (!birthDay || !birthMonth || !birthYear || !sessionData) {
+    if (!stateJson) {
         alert("Temporal data missing. Returning to origin.");
+        window.location.href = '../index.html';
+        return;
+    }
+
+    const CHRONO_STATE = JSON.parse(stateJson);
+    const coreData = CHRONO_STATE.facts.core;
+
+    if (!coreData) {
+        alert("Core data not loaded. Please visit Mission Control first.");
         window.location.href = 'main.html';
         return;
     }
 
-    const birthDate = {
-        day: parseInt(birthDay),
-        month: parseInt(birthMonth),
-        year: parseInt(birthYear)
-    };
-
-    const questions = generateQuestions(birthDate, sessionData);
+    const birthDate = CHRONO_STATE.date;
+    const questions = generateQuestions(birthDate, coreData);
     let currentQuestionIndex = 0;
     let score = 0;
 

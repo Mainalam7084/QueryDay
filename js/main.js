@@ -1,16 +1,15 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    // Retrieve data from session storage
-    const day = sessionStorage.getItem('birthDay');
-    const month = sessionStorage.getItem('birthMonth');
-    const year = sessionStorage.getItem('birthYear');
-    const lat = sessionStorage.getItem('originLatitude');
-    const lon = sessionStorage.getItem('originLongitude');
-    const city = sessionStorage.getItem('originCity') || "Unknown Location";
+    // Retrieve CHRONO_STATE from localStorage
+    const stateJson = localStorage.getItem('CHRONO_STATE');
 
-    if (!day || !month || !year) {
-        window.location.href = 'index.html';
+    if (!stateJson) {
+        window.location.href = '../index.html';
         return;
     }
+
+    const CHRONO_STATE = JSON.parse(stateJson);
+    const { year, month, day } = CHRONO_STATE.date;
+    const { city, lat, lon } = CHRONO_STATE.location;
 
     document.getElementById('display-date').textContent = `${month}/${day}/${year}`;
 
@@ -18,25 +17,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     const loadingOverlay = document.getElementById('loading-overlay');
 
     try {
-        const [yearFact, mathFact, weatherData, eventsData] = await Promise.all([
-            fetchYearFact(year),
-            fetchMathFact(year),
-            fetchWeather(year, month, day, lat, lon),
-            fetchEvents(month, day)
-        ]);
+        let coreData = CHRONO_STATE.facts.core;
 
-        // Save data for Quiz
-        const sessionData = {
-            yearFact,
-            mathFact,
-            weatherData,
-            eventsData,
-            city // Save city for quiz questions
-        };
-        sessionStorage.setItem('queryDayData', JSON.stringify(sessionData));
+        if (!coreData) {
+            console.log("Fetching Core Data...");
+            const [bookFact, numberFact, weatherData, eventsData] = await Promise.all([
+                fetchYearBookFact(year),
+                fetchYearNumberFact(year),
+                fetchWeather(year, month, day, lat, lon),
+                fetchEvents(month, day)
+            ]);
 
-        renderDashboard({ yearFact, mathFact, weatherData, eventsData, city });
-        initCanvas(year, eventsData);
+            coreData = {
+                bookFact,
+                numberFact,
+                weatherData,
+                eventsData,
+                city
+            };
+
+            // Update State
+            CHRONO_STATE.facts.core = coreData;
+            localStorage.setItem('CHRONO_STATE', JSON.stringify(CHRONO_STATE));
+        } else {
+            console.log("Loading Core Data from Cache...");
+        }
+
+        renderDashboard(coreData);
+        initCanvas(year, coreData.eventsData);
 
     } catch (error) {
         console.error("Error fetching data:", error);
@@ -48,18 +56,58 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 // API Functions
-async function fetchYearFact(year) {
+async function fetchYearBookFact(year) {
+    if (!year || isNaN(year)) {
+        return "ERROR: Coordenadas de tiempo insuficientes.";
+    }
+
     try {
-        const res = await fetch(`http://numbersapi.com/${year}/year`);
-        return await res.text();
-    } catch (e) { return `In ${year}, the timeline was fuzzy.`; }
+        // Search for books first published in that year, sorted by rating to get "notable" ones
+        const url = `https://openlibrary.org/search.json?q=first_publish_year:${year}&sort=rating&limit=1`;
+        const res = await fetch(url);
+
+        if (!res.ok) {
+            throw new Error(`OpenLibrary API Error: ${res.status}`);
+        }
+
+        const data = await res.json();
+
+        if (data.docs && data.docs.length > 0) {
+            const book = data.docs[0];
+            const title = book.title;
+            const author = book.author_name ? book.author_name[0] : "Autor Desconocido";
+            return `El libro más notable de este año fue '${title}' por ${author}.`;
+        }
+
+        return `El archivo cultural del año ${year} está cifrado, pero fue una época importante para la literatura.`;
+
+    } catch (e) {
+        console.error("Error fetching book fact:", e);
+        return `El archivo cultural del año ${year} está cifrado, pero fue una época importante para la literatura.`;
+    }
 }
 
-async function fetchMathFact(year) {
+async function fetchYearNumberFact(year) {
+    if (!year || isNaN(year)) {
+        return "ERROR: Datos numéricos inestables.";
+    }
+
     try {
-        const res = await fetch(`http://numbersapi.com/${year}/math`);
-        return await res.text();
-    } catch (e) { return `${year} is a number with mysterious properties.`; }
+        // Search for total count of books published in that year
+        const url = `https://openlibrary.org/search.json?q=first_publish_year:${year}&limit=1`;
+        const res = await fetch(url);
+
+        if (!res.ok) {
+            throw new Error(`OpenLibrary API Error: ${res.status}`);
+        }
+        const data = await res.json();
+        const numFound = data.numFound || 0;
+
+        return `El número ${year} se asocia a la publicación de ${numFound} archivos culturales importantes.`;
+    } catch (e) {
+        console.error("Error fetching number fact:", e);
+        return `El número de origen ${year} oculta un valor que no pudimos descifrar.`;
+    }
 }
 
 async function fetchWeather(year, month, day, lat, lon) {
@@ -101,8 +149,8 @@ async function fetchEvents(month, day) {
 
 // Render Functions
 function renderDashboard(data) {
-    document.getElementById('year-fact').textContent = data.yearFact;
-    document.getElementById('math-fact').textContent = data.mathFact;
+    document.getElementById('year-fact').textContent = data.bookFact;
+    document.getElementById('math-fact').textContent = data.numberFact;
 
     const weatherEl = document.getElementById('weather-data');
     // Update Weather Title with City

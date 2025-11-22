@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QueryDay: Global Status</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Orbitron:wght@400;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div id="loading-overlay">
+        <div class="loader"></div>
+    </div>
+
+    <header>
+        <h1>QueryDay // Global Status</h1>
+        <div class="user-date">Origin: <span id="display-date"></span></div>
+    </header>
+
+    <div class="dashboard">
+        <!-- Population Fact -->
+        <div class="card">
+            <h2>Planetary Population</h2>
+            <div id="pop-fact" class="fact-content">Calculating census data...</div>
+        </div>
+
+        <!-- Tech/Science Fact -->
+        <div class="card">
+            <h2>Scientific Breakthrough</h2>
+            <div id="tech-fact" class="fact-content">Analyzing patent archives...</div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-section">
+        <a href="facts.core.culture.html" class="action-btn">Return to Culture</a>
+        <a href="main.html" class="action-btn">Mission Control</a>
+    </div>
+
+    <script src="../js/tech_world.js"></script>
+</body>
+
+</html>

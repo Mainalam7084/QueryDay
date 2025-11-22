@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QueryDay: Cultural Archive</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Orbitron:wght@400;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div id="loading-overlay">
+        <div class="loader"></div>
+    </div>
+
+    <header>
+        <h1>QueryDay // Cultural Archive</h1>
+        <div class="user-date">Origin: <span id="display-date"></span></div>
+    </header>
+
+    <div class="dashboard">
+        <!-- Movie Fact -->
+        <div class="card">
+            <h2>Cinematic Record</h2>
+            <div id="movie-fact" class="fact-content">Scanning film archives...</div>
+            <img id="movie-poster" src="" alt=""
+                style="max-width: 100%; display: none; margin-top: 10px; border-radius: 5px;">
+        </div>
+
+        <!-- Music Fact -->
+        <div class="card">
+            <h2>Audio Log</h2>
+            <div id="music-fact" class="fact-content">Tuning frequencies...</div>
+            <img id="album-art" src="" alt=""
+                style="max-width: 100%; display: none; margin-top: 10px; border-radius: 5px;">
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-section">
+        <a href="main.html" class="action-btn">Return to Core</a>
+        <a href="tech_world.html" class="action-btn">Access Tech/World</a>
+    </div>
+
+    <script src="../js/culture.js"></script>
+</body>
+
+</html>
