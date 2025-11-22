@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QueryDay: Mission Control</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Orbitron:wght@400;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div id="loading-overlay">
+        <div class="loader"></div>
+    </div>
+
+    <header>
+        <h1>QueryDay // Dashboard</h1>
+        <div class="user-date">Origin: <span id="display-date"></span></div>
+    </header>
+
+    <div class="dashboard">
+        <!-- Year Fact -->
+        <div class="card">
+            <h2>Year Fact</h2>
+            <div id="year-fact" class="fact-content">Loading data stream...</div>
+        </div>
+
+        <!-- Date Fact -->
+        <div class="card">
+            <h2>Date Fact</h2>
+            <div id="date-fact" class="fact-content">Loading data stream...</div>
+        </div>
+
+        <!-- Weather -->
+        <div class="card">
+            <h2>Historical Weather (London)</h2>
+            <div id="weather-data" class="fact-content">Calibrating sensors...</div>
+        </div>
+
+        <!-- Events -->
+        <div class="card">
+            <h2>Historical Event</h2>
+            <div id="events-data" class="fact-content">Scanning archives...</div>
+        </div>
+    </div>
+
+    <!-- Quiz Section -->
+    <div id="quiz-container" class="quiz-section">
+        <h3>Chrono-Quiz</h3>
+        <p>Loading questions...</p>
+    </div>
+
+    <!-- Image Generator -->
+    <div class="image-gen-section">
+        <h2>Visual Archive Generator</h2>
+        <canvas id="fact-canvas"></canvas>
+        <button id="download-btn" class="action-btn">Download Artifact</button>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-section">
+        <a href="predictor.html" class="future-btn">Proceed to Future</a>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+
+</html>

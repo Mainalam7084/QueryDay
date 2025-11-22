@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QueryDay: Begin Your Journey</title>
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>QueryDay</h1>
+        <p class="subtitle">Enter your origin date to begin the chrono-adventure.</p>
+        
+        <form id="birth-form">
+            <div class="date-input-group">
+                <input type="number" id="month" placeholder="MM" min="1" max="12" required>
+                <input type="number" id="day" placeholder="DD" min="1" max="31" required>
+                <input type="number" id="year" placeholder="YYYY" min="1900" max="2025" required>
+            </div>
+            
+            <button type="submit" class="launch-btn">Initialize</button>
+        </form>
+        <div id="error-msg"></div>
+    </div>
+
+    <script src="js/index.js"></script>
+</body>
+</html>
