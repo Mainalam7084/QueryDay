@@ -1,15 +1,15 @@
 /* Inherit variables from index.css */
 :root {
-    --primary-color: #64ffda;
-    --secondary-color: #bd93f9;
-    --accent-color: #ff79c6;
-    --bg-color: #0a0e17;
-    --text-color: #f8f8f2;
-    --glass-bg: rgba(255, 255, 255, 0.08);
-    --glass-border: rgba(255, 255, 255, 0.15);
-    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    --primary-color: #00e5ff;
+    --secondary-color: #ff0055;
+    --accent-color: #ffcc00;
+    --bg-color: #050510;
+    --panel-bg: rgba(10, 15, 30, 0.95);
+    --border-color: #00e5ff;
+    --text-color: #ffffff;
     --font-main: 'Orbitron', sans-serif;
     --font-body: 'Inter', sans-serif;
+    --glow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color);
 }
 
 * {
@@ -23,7 +23,11 @@ body {
     color: var(--text-color);
     font-family: var(--font-body);
     min-height: 100vh;
-    background: radial-gradient(circle at bottom center, #1b2735 0%, #090a0f 100%);
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)),
+        url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?ixlib=rb-4.0.3&auto=format&fit=crop&w=2068&q=80');
+    background-size: cover;
+    background-attachment: fixed;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -33,34 +37,42 @@ body {
 header {
     text-align: center;
     margin-bottom: 3rem;
+    background: var(--panel-bg);
+    padding: 1rem 3rem;
+    border: 2px solid var(--primary-color);
+    transform: skewX(-10deg);
+    box-shadow: var(--glow);
 }
 
 h1 {
     font-family: var(--font-main);
     font-size: 2.5rem;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--primary-color);
     margin-bottom: 0.5rem;
+    transform: skewX(10deg);
+    /* Counter skew */
 }
 
 p {
-    color: rgba(248, 248, 242, 0.7);
+    color: var(--accent-color);
+    font-family: var(--font-main);
+    letter-spacing: 2px;
+    transform: skewX(10deg);
 }
 
 /* Cards Container */
 .cards-container {
     display: flex;
     justify-content: center;
-    gap: 2rem;
+    gap: 3rem;
     flex-wrap: wrap;
-    margin-bottom: 3rem;
-    perspective: 1000px;
+    margin-bottom: 4rem;
+    perspective: 1200px;
 }
 
 .fortune-card {
-    width: 220px;
-    height: 320px;
+    width: 240px;
+    height: 360px;
     background: transparent;
     perspective: 1000px;
     cursor: pointer;
@@ -71,10 +83,8 @@ p {
     width: 100%;
     height: 100%;
     text-align: center;
-    transition: transform 0.8s;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     transform-style: preserve-3d;
-    border-radius: 20px;
-    box-shadow: var(--glass-shadow);
 }
 
 .fortune-card.revealed .card-inner {
@@ -88,77 +98,114 @@ p {
     height: 100%;
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
-    border-radius: 20px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 1.5rem;
-    border: 1px solid var(--glass-border);
+    border: 3px solid var(--primary-color);
+    background: var(--panel-bg);
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
 }
 
+/* Card Back Design (The "Cover") */
 .card-front {
-    background: var(--glass-bg);
-    backdrop-filter: blur(16px);
-    background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+    background-image:
+        repeating-linear-gradient(45deg,
+            rgba(0, 229, 255, 0.1),
+            rgba(0, 229, 255, 0.1) 10px,
+            transparent 10px,
+            transparent 20px);
 }
 
 .card-front::after {
-    content: '?';
-    font-family: var(--font-main);
+    content: "🔮";
     font-size: 5rem;
-    color: rgba(255, 255, 255, 0.1);
+    filter: drop-shadow(0 0 10px var(--primary-color));
 }
 
+.card-front::before {
+    content: "";
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    border: 1px dashed var(--primary-color);
+}
+
+/* Card Face (The Result) */
 .card-back {
-    background: linear-gradient(135deg, rgba(100, 255, 218, 0.1), rgba(189, 147, 249, 0.1));
-    backdrop-filter: blur(20px);
     transform: rotateY(180deg);
-    border-color: var(--primary-color);
+    border-color: var(--secondary-color);
+    background: linear-gradient(135deg, #1a0b1a, #0a050a);
 }
 
 .emoji {
-    font-size: 4rem;
-    margin-bottom: 1rem;
-    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+    font-size: 5rem;
+    margin-bottom: 1.5rem;
+    filter: drop-shadow(0 0 20px var(--secondary-color));
+    animation: floatEmoji 3s ease-in-out infinite;
 }
 
 .prediction-text {
-    font-size: 1rem;
+    font-size: 1.1rem;
     line-height: 1.4;
-    color: var(--text-color);
+    color: #fff;
+    font-family: var(--font-main);
+    text-transform: uppercase;
+    transform: none;
+    /* Reset skew if inherited */
 }
 
 /* Controls */
 .controls {
     display: flex;
-    gap: 1.5rem;
+    gap: 2rem;
 }
 
 .btn,
 .btn-secondary {
-    background: linear-gradient(135deg, rgba(100, 255, 218, 0.2), rgba(189, 147, 249, 0.2));
-    border: 1px solid var(--glass-border);
-    color: var(--primary-color);
-    padding: 12px 30px;
+    background: var(--primary-color);
+    border: none;
+    color: #000;
+    padding: 15px 40px;
     font-family: var(--font-main);
-    font-size: 1rem;
+    font-size: 1.2rem;
     text-transform: uppercase;
     cursor: pointer;
-    border-radius: 50px;
-    transition: all 0.3s ease;
+    clip-path: polygon(15% 0, 100% 0, 100% 100%, 0% 100%, 0% 30%);
+    transition: all 0.2s ease;
     text-decoration: none;
+    font-weight: bold;
 }
 
 .btn:hover,
 .btn-secondary:hover {
-    background: linear-gradient(135deg, rgba(100, 255, 218, 0.4), rgba(189, 147, 249, 0.4));
-    color: #fff;
-    transform: translateY(-2px);
+    background: #fff;
+    box-shadow: 0 0 25px #fff;
+    transform: scale(1.05);
 }
 
 .btn-secondary {
     background: transparent;
-    border-color: var(--secondary-color);
+    border: 2px solid var(--secondary-color);
     color: var(--secondary-color);
+}
+
+.btn-secondary:hover {
+    background: var(--secondary-color);
+    color: #fff;
+}
+
+@keyframes floatEmoji {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
 }

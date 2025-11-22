@@ -1,11 +1,17 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    const birthDateData = sessionStorage.getItem('birthDate');
-    if (!birthDateData) {
+    // Retrieve data from session storage
+    const day = sessionStorage.getItem('birthDay');
+    const month = sessionStorage.getItem('birthMonth');
+    const year = sessionStorage.getItem('birthYear');
+    const lat = sessionStorage.getItem('originLatitude');
+    const lon = sessionStorage.getItem('originLongitude');
+    const city = sessionStorage.getItem('originCity') || "Unknown Location";
+
+    if (!day || !month || !year) {
         window.location.href = 'index.html';
         return;
     }
 
-    const { day, month, year } = JSON.parse(birthDateData);
     document.getElementById('display-date').textContent = `${month}/${day}/${year}`;
 
     // Show loading
@@ -15,7 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const [yearFact, mathFact, weatherData, eventsData] = await Promise.all([
             fetchYearFact(year),
             fetchMathFact(year),
-            fetchWeather(year, month, day),
+            fetchWeather(year, month, day, lat, lon),
             fetchEvents(month, day)
         ]);
 
@@ -24,11 +30,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             yearFact,
             mathFact,
             weatherData,
-            eventsData
+            eventsData,
+            city // Save city for quiz questions
         };
         sessionStorage.setItem('queryDayData', JSON.stringify(sessionData));
 
-        renderDashboard({ yearFact, mathFact, weatherData, eventsData });
+        renderDashboard({ yearFact, mathFact, weatherData, eventsData, city });
         initCanvas(year, eventsData);
 
     } catch (error) {
@@ -55,10 +62,14 @@ async function fetchMathFact(year) {
     } catch (e) { return `${year} is a number with mysterious properties.`; }
 }
 
-async function fetchWeather(year, month, day) {
+async function fetchWeather(year, month, day, lat, lon) {
     try {
+        // Default to London if no coords (fallback)
+        const latitude = lat || 51.5;
+        const longitude = lon || 0.1;
+
         const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-        const res = await fetch(`https://archive-api.open-meteo.com/v1/archive?latitude=51.5&longitude=0.1&start_date=${formattedDate}&end_date=${formattedDate}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=Europe%2FLondon`);
+        const res = await fetch(`https://archive-api.open-meteo.com/v1/archive?latitude=${latitude}&longitude=${longitude}&start_date=${formattedDate}&end_date=${formattedDate}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto`);
         const data = await res.json();
         if (data.daily) {
             return {
@@ -68,7 +79,10 @@ async function fetchWeather(year, month, day) {
             };
         }
         return null;
-    } catch (e) { return null; }
+    } catch (e) {
+        console.error("Weather fetch error", e);
+        return null;
+    }
 }
 
 async function fetchEvents(month, day) {
@@ -91,6 +105,12 @@ function renderDashboard(data) {
     document.getElementById('math-fact').textContent = data.mathFact;
 
     const weatherEl = document.getElementById('weather-data');
+    // Update Weather Title with City
+    const weatherCardTitle = weatherEl.parentElement.querySelector('h2');
+    if (weatherCardTitle) {
+        weatherCardTitle.textContent = `Historical Weather (${data.city})`;
+    }
+
     if (data.weatherData) {
         weatherEl.innerHTML = `
             Max Temp: ${data.weatherData.maxTemp}°C<br>
@@ -98,7 +118,7 @@ function renderDashboard(data) {
             Precipitation: ${data.weatherData.precip}mm
         `;
     } else {
-        weatherEl.textContent = "Atmospheric data unavailable for this coordinate.";
+        weatherEl.textContent = "Atmospheric data unavailable for this coordinate/date.";
     }
 
     const eventsEl = document.getElementById('events-data');
@@ -138,30 +158,36 @@ function initCanvas(year, events) {
     img.onload = () => {
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-        // Overlay dark layer
-        ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+        // Overlay dark layer with scanlines
+        ctx.fillStyle = "rgba(5, 5, 16, 0.8)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+        // Scanline effect
+        ctx.fillStyle = "rgba(0, 229, 255, 0.05)";
+        for (let i = 0; i < canvas.height; i += 4) {
+            ctx.fillRect(0, i, canvas.width, 2);
+        }
+
         // Border
-        ctx.strokeStyle = "#64ffda";
-        ctx.lineWidth = 10;
+        ctx.strokeStyle = "#00e5ff";
+        ctx.lineWidth = 15;
         ctx.strokeRect(0, 0, canvas.width, canvas.height);
 
-        // Text styles
-        ctx.font = "bold 28px 'Orbitron'";
-        ctx.fillStyle = "#64ffda";
+        // Text styles - Anime Title Style
+        ctx.font = "bold 32px 'Orbitron'";
+        ctx.fillStyle = "#ffffff";
         ctx.textAlign = "center";
-        ctx.shadowColor = "#64ffda";
-        ctx.shadowBlur = 10;
+        ctx.shadowColor = "#00e5ff";
+        ctx.shadowBlur = 20;
 
         // Wrap text
-        wrapText(ctx, impactPhrase, canvas.width / 2, canvas.height / 2, 700, 40);
+        wrapText(ctx, impactPhrase, canvas.width / 2, canvas.height / 2, 700, 45);
 
         // Add footer
-        ctx.font = "16px 'Inter'";
-        ctx.fillStyle = "#bd93f9";
+        ctx.font = "14px 'Orbitron'";
+        ctx.fillStyle = "#ffcc00";
         ctx.shadowBlur = 0;
-        ctx.fillText("QueryDay Artifact", canvas.width - 100, canvas.height - 20);
+        ctx.fillText("CHRONO_ARCHIVE // QUERYDAY", canvas.width - 150, canvas.height - 20);
     };
 
     btn.addEventListener('click', () => {
