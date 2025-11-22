@@ -1,0 +1,168 @@
+/* Inherit variables from index.css */
+:root {
+    --primary-color: #64ffda;
+    --secondary-color: #bd93f9;
+    --accent-color: #ff79c6;
+    --bg-color: #0a0e17;
+    --text-color: #f8f8f2;
+    --glass-bg: rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    --font-main: 'Orbitron', sans-serif;
+    --font-body: 'Inter', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    background: radial-gradient(circle at center, #1b2735 0%, #090a0f 100%);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+h1 {
+    font-family: var(--font-main);
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+}
+
+.user-date {
+    font-family: var(--font-main);
+    font-size: 1.2rem;
+    color: rgba(248, 248, 242, 0.7);
+}
+
+/* Quiz Container */
+.quiz-container {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 3rem;
+    max-width: 800px;
+    width: 100%;
+    text-align: center;
+    box-shadow: var(--glass-shadow);
+}
+
+.question-card {
+    margin-bottom: 2rem;
+}
+
+.question-text {
+    font-family: var(--font-main);
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    color: var(--primary-color);
+    min-height: 3em;
+    /* Prevent layout jump */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.option-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    color: var(--text-color);
+    padding: 1.5rem;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    font-family: var(--font-body);
+}
+
+.option-btn:hover {
+    background: rgba(100, 255, 218, 0.1);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.option-btn.correct {
+    background: rgba(0, 255, 0, 0.2);
+    border-color: #00ff00;
+}
+
+.option-btn.wrong {
+    background: rgba(255, 0, 0, 0.2);
+    border-color: #ff0000;
+}
+
+.score-display {
+    font-family: var(--font-main);
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: var(--secondary-color);
+}
+
+#score-message {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    color: var(--text-color);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    width: 0%;
+    transition: width 0.5s ease;
+}
+
+/* Buttons */
+.action-btn,
+.future-btn {
+    background: linear-gradient(135deg, rgba(100, 255, 218, 0.2), rgba(189, 147, 249, 0.2));
+    border: 1px solid var(--glass-border);
+    color: var(--primary-color);
+    padding: 12px 30px;
+    font-family: var(--font-main);
+    font-size: 1rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    margin: 0.5rem;
+}
+
+.action-btn:hover,
+.future-btn:hover {
+    background: linear-gradient(135deg, rgba(100, 255, 218, 0.4), rgba(189, 147, 249, 0.4));
+    color: #fff;
+    transform: translateY(-2px);
+}

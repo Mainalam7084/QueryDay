@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QueryDay: Chrono-Quiz</title>
+    <link rel="stylesheet" href="css/quiz.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Orbitron:wght@400;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <h1>Chrono-Quiz</h1>
+        <div class="user-date">Test Your Temporal Knowledge</div>
+    </header>
+
+    <div class="quiz-container" id="quiz-app">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress"></div>
+        </div>
+
+        <div id="question-area">
+            <div class="question-text" id="question">Loading...</div>
+            <div class="options-grid" id="options"></div>
+        </div>
+
+        <div id="result-area" style="display: none;">
+            <div class="score-display" id="final-score"></div>
+            <p id="score-message"></p>
+            <br>
+            <a href="main.html" class="action-btn">Return to Dashboard</a>
+            <a href="predictor.html" class="future-btn">See Your Future</a>
+        </div>
+    </div>
+
+    <script src="js/quiz.js"></script>
+</body>
+
+</html>

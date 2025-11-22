@@ -1,12 +1,21 @@
-/* Predictor Styles */
+/* Inherit variables from index.css */
 :root {
-    --primary-color: #00f3ff;
-    --secondary-color: #bc13fe;
-    --bg-color: #050510;
-    --card-bg: rgba(20, 20, 40, 0.8);
-    --text-color: #e0e0e0;
+    --primary-color: #64ffda;
+    --secondary-color: #bd93f9;
+    --accent-color: #ff79c6;
+    --bg-color: #0a0e17;
+    --text-color: #f8f8f2;
+    --glass-bg: rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     --font-main: 'Orbitron', sans-serif;
     --font-body: 'Inter', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
@@ -14,39 +23,44 @@ body {
     color: var(--text-color);
     font-family: var(--font-body);
     min-height: 100vh;
-    margin: 0;
+    background: radial-gradient(circle at bottom center, #1b2735 0%, #090a0f 100%);
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-image:
-        radial-gradient(circle at 50% 50%, rgba(188, 19, 254, 0.1) 0%, transparent 60%);
+    padding: 2rem;
 }
 
 header {
-    margin-top: 2rem;
     text-align: center;
+    margin-bottom: 3rem;
 }
 
 h1 {
     font-family: var(--font-main);
     font-size: 2.5rem;
-    color: var(--secondary-color);
-    text-shadow: 0 0 10px var(--secondary-color);
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
 }
 
+p {
+    color: rgba(248, 248, 242, 0.7);
+}
+
+/* Cards Container */
 .cards-container {
     display: flex;
     justify-content: center;
-    gap: 30px;
-    margin-top: 3rem;
+    gap: 2rem;
     flex-wrap: wrap;
+    margin-bottom: 3rem;
     perspective: 1000px;
-    padding: 20px;
 }
 
 .fortune-card {
-    width: 300px;
-    height: 400px;
+    width: 220px;
+    height: 320px;
     background: transparent;
     perspective: 1000px;
     cursor: pointer;
@@ -59,6 +73,8 @@ h1 {
     text-align: center;
     transition: transform 0.8s;
     transform-style: preserve-3d;
+    border-radius: 20px;
+    box-shadow: var(--glass-shadow);
 }
 
 .fortune-card.revealed .card-inner {
@@ -72,48 +88,61 @@ h1 {
     height: 100%;
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
-    border-radius: 15px;
+    border-radius: 20px;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 20px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-    border: 1px solid var(--secondary-color);
+    padding: 1.5rem;
+    border: 1px solid var(--glass-border);
 }
 
 .card-front {
-    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
 }
 
 .card-front::after {
     content: '?';
-    font-size: 5rem;
-    color: var(--secondary-color);
     font-family: var(--font-main);
+    font-size: 5rem;
+    color: rgba(255, 255, 255, 0.1);
 }
 
 .card-back {
-    background: linear-gradient(135deg, var(--secondary-color), #4a00e0);
-    color: white;
+    background: linear-gradient(135deg, rgba(100, 255, 218, 0.1), rgba(189, 147, 249, 0.1));
+    backdrop-filter: blur(20px);
     transform: rotateY(180deg);
-    font-size: 1.2rem;
-    line-height: 1.6;
-    font-weight: bold;
+    border-color: var(--primary-color);
 }
 
+.emoji {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+}
+
+.prediction-text {
+    font-size: 1rem;
+    line-height: 1.4;
+    color: var(--text-color);
+}
+
+/* Controls */
 .controls {
-    margin-top: 3rem;
     display: flex;
-    gap: 20px;
+    gap: 1.5rem;
 }
 
-.btn {
-    background: transparent;
-    border: 2px solid var(--primary-color);
+.btn,
+.btn-secondary {
+    background: linear-gradient(135deg, rgba(100, 255, 218, 0.2), rgba(189, 147, 249, 0.2));
+    border: 1px solid var(--glass-border);
     color: var(--primary-color);
-    padding: 15px 40px;
+    padding: 12px 30px;
     font-family: var(--font-main);
-    font-size: 1.2rem;
+    font-size: 1rem;
     text-transform: uppercase;
     cursor: pointer;
     border-radius: 50px;
@@ -121,19 +150,15 @@ h1 {
     text-decoration: none;
 }
 
-.btn:hover {
-    background: var(--primary-color);
-    color: black;
-    box-shadow: 0 0 20px var(--primary-color);
+.btn:hover,
+.btn-secondary:hover {
+    background: linear-gradient(135deg, rgba(100, 255, 218, 0.4), rgba(189, 147, 249, 0.4));
+    color: #fff;
+    transform: translateY(-2px);
 }
 
 .btn-secondary {
+    background: transparent;
     border-color: var(--secondary-color);
     color: var(--secondary-color);
-}
-
-.btn-secondary:hover {
-    background: var(--secondary-color);
-    color: white;
-    box-shadow: 0 0 20px var(--secondary-color);
 }

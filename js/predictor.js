@@ -1,24 +1,19 @@
 const FUTURE_OUTCOMES = [
-    "You will invent a new color that only you can see.",
-    "A stray cat will lead you to a hidden treasure.",
-    "You will accidentally become the mayor of a small town.",
-    "Your left shoe will always be slightly tighter than your right.",
-    "You will discover a new species of deep-sea creature in your bathtub.",
-    "Aliens will contact you, but only to ask for WiFi passwords.",
-    "You will win a lottery, but the prize is 10,000 rubber ducks.",
-    "A time traveler will ask you for directions to the nearest coffee shop.",
-    "You will become famous for a dance move you did while sneezing.",
-    "Your plants will start whispering secrets to you.",
-    "You will find a key that opens every door, but locks none.",
-    "A cloud will follow you around, raining only on your enemies.",
-    "You will write a bestseller without typing a single word.",
-    "Your reflection will start giving you fashion advice.",
-    "You will be the first person to high-five a ghost.",
-    "A squirrel will challenge you to a game of chess and win.",
-    "You will discover that you can speak fluent Dolphin.",
-    "Your shadow will detach and start its own career.",
-    "You will bake a cake so delicious it brings world peace.",
-    "You will accidentally join a secret society of mimes."
+    { emoji: "💍", desc: "A partnership will define your next era." },
+    { emoji: "✈️", desc: "New horizons await across the ocean." },
+    { emoji: "💸", desc: "Fortune favors the bold, wealth is incoming." },
+    { emoji: "💀", desc: "A transformation is necessary; let the old self die." },
+    { emoji: "🚀", desc: "Your career will take a sudden upward trajectory." },
+    { emoji: "🔮", desc: "Trust your intuition; the answers are within." },
+    { emoji: "🏠", desc: "Stability and home will become your sanctuary." },
+    { emoji: "🎨", desc: "Creativity will unlock a hidden door." },
+    { emoji: "🏆", desc: "Victory is certain if you persist." },
+    { emoji: "🌊", desc: "Go with the flow; resistance is futile." },
+    { emoji: "🔑", desc: "You will find the solution to a long-standing problem." },
+    { emoji: "❤️", desc: "Love will bloom in an unexpected place." },
+    { emoji: "🌟", desc: "Fame or recognition is on the horizon." },
+    { emoji: "📚", desc: "Knowledge will be your greatest weapon." },
+    { emoji: "🧘", desc: "Inner peace will bring outer success." }
 ];
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -41,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cards.forEach((card, index) => {
                 setTimeout(() => {
                     card.classList.add('revealed');
-                }, index * 500); // Staggered reveal
+                }, index * 600); // Staggered reveal
             });
         }, 100);
     });
@@ -63,7 +58,8 @@ function renderCards(fortunes) {
             <div class="card-inner">
                 <div class="card-front"></div>
                 <div class="card-back">
-                    <p>${fortune}</p>
+                    <div class="emoji">${fortune.emoji}</div>
+                    <p class="prediction-text">${fortune.desc}</p>
                 </div>
             </div>
         `;

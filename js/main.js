@@ -12,16 +12,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     const loadingOverlay = document.getElementById('loading-overlay');
 
     try {
-        const [yearFact, dateFact, weatherData, eventsData] = await Promise.all([
+        const [yearFact, mathFact, weatherData, eventsData] = await Promise.all([
             fetchYearFact(year),
-            fetchDateFact(month, day),
+            fetchMathFact(year),
             fetchWeather(year, month, day),
             fetchEvents(month, day)
         ]);
 
-        renderDashboard({ yearFact, dateFact, weatherData, eventsData });
-        initQuiz({ yearFact, dateFact, eventsData });
-        initCanvas(yearFact);
+        // Save data for Quiz
+        const sessionData = {
+            yearFact,
+            mathFact,
+            weatherData,
+            eventsData
+        };
+        sessionStorage.setItem('queryDayData', JSON.stringify(sessionData));
+
+        renderDashboard({ yearFact, mathFact, weatherData, eventsData });
+        initCanvas(year, eventsData);
 
     } catch (error) {
         console.error("Error fetching data:", error);
@@ -40,11 +48,11 @@ async function fetchYearFact(year) {
     } catch (e) { return `In ${year}, the timeline was fuzzy.`; }
 }
 
-async function fetchDateFact(month, day) {
+async function fetchMathFact(year) {
     try {
-        const res = await fetch(`http://numbersapi.com/${month}/${day}/date`);
+        const res = await fetch(`http://numbersapi.com/${year}/math`);
         return await res.text();
-    } catch (e) { return `On ${month}/${day}, nothing notable was recorded in this sector.`; }
+    } catch (e) { return `${year} is a number with mysterious properties.`; }
 }
 
 async function fetchWeather(year, month, day) {
@@ -65,27 +73,22 @@ async function fetchWeather(year, month, day) {
 
 async function fetchEvents(month, day) {
     try {
-        // Using a CORS proxy or alternative if ZenQuotes blocks. 
-        // ZenQuotes often blocks client-side. Trying history.muffinlabs.com as a robust fallback if ZenQuotes fails or using it directly as it's more open.
-        // Prompt asked for ZenQuotes. I will try it. If it fails, I'll return a generic message or use a fallback.
-        // Note: ZenQuotes free tier is often limited.
-        // Let's try to fetch from ZenQuotes.
-        const res = await fetch(`https://today.zenquotes.io/api/${month}/${day}`);
+        // Using Wikimedia REST API
+        const res = await fetch(`https://en.wikipedia.org/api/rest_v1/feed/onthisday/events/${month}/${day}`);
         if (!res.ok) throw new Error('Network response was not ok');
         const data = await res.json();
-        return data.data ? data.data.Events : [];
+        // Return top 5 events
+        return data.events ? data.events.slice(0, 5) : [];
     } catch (e) {
-        console.warn("ZenQuotes failed, trying fallback...");
-        // Fallback to a hardcoded list or another source if possible, or just return empty.
-        // For the sake of the assignment, we handle the error gracefully.
-        return ["Historical data stream interrupted."];
+        console.warn("Wikimedia API failed, using fallback.");
+        return [{ text: "Historical records are fragmented for this date." }];
     }
 }
 
 // Render Functions
 function renderDashboard(data) {
     document.getElementById('year-fact').textContent = data.yearFact;
-    document.getElementById('date-fact').textContent = data.dateFact;
+    document.getElementById('math-fact').textContent = data.mathFact;
 
     const weatherEl = document.getElementById('weather-data');
     if (data.weatherData) {
@@ -100,57 +103,16 @@ function renderDashboard(data) {
 
     const eventsEl = document.getElementById('events-data');
     if (Array.isArray(data.eventsData) && data.eventsData.length > 0) {
-        // Pick a random event or first few
-        const event = typeof data.eventsData[0] === 'string' ? data.eventsData[0] : data.eventsData[0].text;
+        // Pick the first event
+        const event = data.eventsData[0].text;
         eventsEl.textContent = event;
     } else {
         eventsEl.textContent = "No historical events found in the archives.";
     }
 }
 
-// Quiz Logic
-function initQuiz(data) {
-    const quizContainer = document.getElementById('quiz-container');
-    // Generate a simple question based on the Year Fact
-    // Extract a number from the year fact if possible, or just ask "What year...?"
-
-    // Let's make a question about the birth year.
-    const birthYear = JSON.parse(sessionStorage.getItem('birthDate')).year;
-    const question = `Which year is your origin year?`;
-    const correctAnswer = birthYear;
-
-    // Generate wrong answers
-    const wrong1 = birthYear - Math.floor(Math.random() * 5) - 1;
-    const wrong2 = birthYear + Math.floor(Math.random() * 5) + 1;
-    const options = [correctAnswer, wrong1, wrong2].sort(() => Math.random() - 0.5);
-
-    let html = `<h3>Chrono-Quiz</h3><p>${question}</p><div class="quiz-options">`;
-    options.forEach(opt => {
-        html += `<button class="quiz-btn" onclick="checkAnswer(this, ${opt === correctAnswer})">${opt}</button>`;
-    });
-    html += `</div><p id="quiz-result"></p>`;
-
-    quizContainer.innerHTML = html;
-}
-
-window.checkAnswer = function (btn, isCorrect) {
-    const result = document.getElementById('quiz-result');
-    if (isCorrect) {
-        btn.classList.add('correct');
-        result.textContent = "Correct! Timeline verified.";
-        result.style.color = "#00ff00";
-    } else {
-        btn.classList.add('wrong');
-        result.textContent = "Incorrect. Temporal anomaly detected.";
-        result.style.color = "#ff0000";
-    }
-    // Disable all buttons
-    const btns = document.querySelectorAll('.quiz-btn');
-    btns.forEach(b => b.disabled = true);
-};
-
 // Canvas Image Generator
-function initCanvas(text) {
+function initCanvas(year, events) {
     const canvas = document.getElementById('fact-canvas');
     const ctx = canvas.getContext('2d');
     const btn = document.getElementById('download-btn');
@@ -158,6 +120,15 @@ function initCanvas(text) {
     // Set canvas size
     canvas.width = 800;
     canvas.height = 400;
+
+    // Generate Impact Phrase
+    let eventText = "A quiet day in history.";
+    if (events && events.length > 0) {
+        // Try to find a short one
+        const shortEvent = events.find(e => e.text.length < 100) || events[0];
+        eventText = shortEvent.text;
+    }
+    const impactPhrase = `YEAR ${year}: ${eventText}`;
 
     // Load random image
     const img = new Image();
@@ -168,21 +139,34 @@ function initCanvas(text) {
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
         // Overlay dark layer
-        ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
+        ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+        // Border
+        ctx.strokeStyle = "#64ffda";
+        ctx.lineWidth = 10;
+        ctx.strokeRect(0, 0, canvas.width, canvas.height);
+
         // Text styles
-        ctx.font = "bold 24px 'Courier New'";
-        ctx.fillStyle = "#00f3ff";
+        ctx.font = "bold 28px 'Orbitron'";
+        ctx.fillStyle = "#64ffda";
         ctx.textAlign = "center";
+        ctx.shadowColor = "#64ffda";
+        ctx.shadowBlur = 10;
 
         // Wrap text
-        wrapText(ctx, text, canvas.width / 2, canvas.height / 2, 700, 30);
+        wrapText(ctx, impactPhrase, canvas.width / 2, canvas.height / 2, 700, 40);
+
+        // Add footer
+        ctx.font = "16px 'Inter'";
+        ctx.fillStyle = "#bd93f9";
+        ctx.shadowBlur = 0;
+        ctx.fillText("QueryDay Artifact", canvas.width - 100, canvas.height - 20);
     };
 
     btn.addEventListener('click', () => {
         const link = document.createElement('a');
-        link.download = 'chrono-fact.png';
+        link.download = `chrono-artifact-${year}.png`;
         link.href = canvas.toDataURL();
         link.click();
     });
